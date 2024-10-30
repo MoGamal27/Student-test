@@ -2,42 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import dropdown from "/src/assets/assets_frontend/dropdown_icon.svg";
 import { assets } from '../assets/assets_frontend/assets';
-import { useUser } from '../context/UserContext'; // Import the UserContext
+import { UserContext } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from 'i18next';
 import LanguageSwitcher from './LnaguageSwitcher';
+import { useContext } from 'react';
 
 
 export default function Navbar() {
     const navigate = useNavigate();
-    const { user, setUser } = useUser(); // Access user context
+    const { user, getUserById} = useContext(UserContext); // Access user context
     const [showMenu, setShowMenu] = useState(false);
-    const [token, setToken] = useState(true);
+    const [token, setToken] = useState(localStorage.getItem('token'))
+    const userId = decodedToken.id ? parseInt(decodedToken.id, 10) : null;
     const { t } = useTranslation();
 
     
       
 
     useEffect(() => {
-        // Fetch user data when the component mounts
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/api/users/', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`, // Use the token from local storage
-                    },
-                });
-                const data = await response.json();
-                setUser(data); // Set user data in context
-            } catch (err) {
-                console.error('Failed to fetch user data:', err);
-            }
-        };
-
         if (token) {
-            fetchUserData();
+          getUserById(userId)
         }
-    }, [token, setUser]);
+      }, [token])
 
     
     return (

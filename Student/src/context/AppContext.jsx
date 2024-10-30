@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+/*import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import Stripe from 'stripe';
 
@@ -33,16 +33,15 @@ export const AppProvider = ({ children }) => {
         event.preventDefault();
         setProcessing(true);
     
-        if (!Stripe || !elements) return;
+        //if (!Stripe || !elements) return;
     
-        const response = await axios.post('/create-payment-intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ amount: 1000 }), 
-        });
-    
+        const response = await axios.post('http://localhost:3000/api/payment/create-payment-intent', {
+          payment_method: '4242 4242 4242 4242',
+          amount: 1000, // Adjust as necessary
+
+      });
+      console.log(response.data);
+      
         const { clientSecret } = await response.json();
     
         const payload = await Stripe.confirmCardPayment(clientSecret, {
@@ -79,6 +78,33 @@ export const AppProvider = ({ children }) => {
 
     return (
         <AppContext.Provider value={{ teachers , handleSubmit ,accounts , transferPoints}}>
+            {children}
+        </AppContext.Provider>
+    );
+};*/
+import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
+
+export const AppContext = createContext();
+
+export const AppProvider = ({ children }) => {
+    const [teachers, setTeachers] = useState([]);
+
+    useEffect(() => {
+        const fetchTeachers = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/api/teachers'); // Adjust the URL as necessary
+                setTeachers(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchTeachers();
+    }, []);
+
+    return (
+        <AppContext.Provider value={{ teachers }}>
             {children}
         </AppContext.Provider>
     );
