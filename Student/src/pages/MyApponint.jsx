@@ -2,10 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { AppContext } from '../context/AppContext';
-import {useStripe} from '@stripe/react-stripe-js';
 import { useTranslation } from 'react-i18next';
-
-
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 
 export default function MyAppointment() {
   const { teachers } = useContext(AppContext);
@@ -13,12 +11,9 @@ export default function MyAppointment() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [studentId, setStudentId] = useState(null);
-  const [processing, setProcessing] = useState(false);
-  const [succeeded, setSucceeded] = useState(false);
-  const stripe = useStripe();
-  const {handleSubmit} = useContext(AppContext);
   const { t } = useTranslation();
-
+  const [showPayPal, setShowPayPal] = useState(false);
+  const [currentBooking, setCurrentBooking] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -63,6 +58,16 @@ export default function MyAppointment() {
     }
   };
 
+  const makePayment = (booking) => {
+    setCurrentBooking(booking);
+    setShowPayPal(true);
+  };
+
+  const handleApprove = (orderId) => {
+    setShowPayPal(false);
+    alert("Payment successful for order " + orderId);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -86,13 +91,14 @@ export default function MyAppointment() {
                     {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleString()}
                   </p>
                 </div>
-                <div></div>
-                {/*Payemnt*/}
                 <div className='flex flex-col gap-2 justify-end'>
-                <form onSubmit={handleSubmit}>
-                <button type="submit" disabled={!stripe || processing || succeeded}>{processing ? 'Processing...' : 'Pay'}
-                </button>{error && <div>{error}</div>}{succeeded && <div>{t('Payonline')}!</div>}
-                </form>
+                  <button
+                    className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-blue-500 hover:text-white transition-all duration-300'
+                    onClick={() => makePayment(booking)}
+                  >
+                    {t('Pay')}
+                  </button>
+
                   <button
                     className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-500 hover:text-white transition-all duration-300'
                     onClick={() => handleCancelAppointment(booking.id)}
@@ -107,6 +113,28 @@ export default function MyAppointment() {
           <p>{t('No appointments found')}.</p>
         )}
       </div>
+      
+      {showPayPal && (
+        <PayPalScriptProvider options={{ "client-id": "AfhUouOs3xx6CHsWXPhX1K9dUfk0231k2U-8Nra2NkkTRdBdyIkOZVHkbnqEf-E54oMjXlfHTBe8Ddl6" }}>
+          <div className="paypal-container">
+            <PayPalButtons
+              createOrder={async (data, actions) => {
+                const response = await axios.post('http://localhost:3000/api/payment/create-order', {
+                  bookings: bookings.map(booking => booking.id),
+                });
+                return response.data.orderID;
+              }}
+              onApprove={(data, actions) => {
+                handleApprove(data.orderID);
+              }}
+              onError={(err) => {
+                console.error("PayPal Checkout onError", err);
+                alert("Payment failed. Please try again.");
+              }}
+            />
+          </div>
+        </PayPalScriptProvider>
+      )}
     </div>
   );
 }
