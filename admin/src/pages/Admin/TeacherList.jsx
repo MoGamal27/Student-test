@@ -7,6 +7,7 @@ export default function TeacherList() {
   useEffect(() => {
     if (token) {
       getAllTeacher();
+      console.log(teacher);
     }
   }, [token]);
 
@@ -14,7 +15,7 @@ export default function TeacherList() {
     <div className='m-5 max-h-[90vh] overflow-y-scroll'>
       <h1 className='text-lg font-medium'>All Teachers</h1>
       <div className='flex flex-wrap w-full gap-4 pt-5 gap-y-5'>
-        {teacher.length > 0 ? (
+        {teacher ? (
           teacher.map((item, index) => (
             <div
               className='border border-indigo-200 rounded-xl max-w-56 overflow-hidden cursor-pointer group'
@@ -42,7 +43,7 @@ export default function TeacherList() {
                   Watch Intro Video
                 </a>
                 <p className='text-zinc-600 text-sm'>
-                  Fees: {item.fees}
+                  Fees: {item.fees}$
                   </p>
               </div>
             </div>

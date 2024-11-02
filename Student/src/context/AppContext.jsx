@@ -36,7 +36,7 @@ export const AppProvider = ({ children }) => {
         const fetchTeachers = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/api/teachers'); // Adjust the URL as necessary
-                setTeachers(response.data);
+                setTeachers(response.data.data);
             } catch (error) {
                 console.error(error);
             }

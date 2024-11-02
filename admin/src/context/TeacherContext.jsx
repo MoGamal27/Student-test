@@ -16,7 +16,23 @@ const TeacherContextProvider = (props)=> {
                 headers: { Authorization: `Bearer ${token}` },
             })
             if (response.data.success) {
-                setTeacher(response.data.teacher)
+                setTeacher(response.data.data)
+            } else {
+                toast.error(response.data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const updateTeacher = async (id, updatedData) => {
+        try {
+            const  response  = await axios.put(`${backendUrl}/teachers/${id}`, updatedData, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            if (response.data.success) {
+                toast.success(response.data.message)
+                setTeacher(response.data.data)
             } else {
                 toast.error(response.data.message)
             }
@@ -40,8 +56,27 @@ const TeacherContextProvider = (props)=> {
         }
     }
  
+    // add points to user
+    const addPoints = async (userId, points) => {
+       
+        try {
+            const response = await axios.put(`http://localhost:3000/api/users/point/addPoints`, { 
+                userId: userId,
+                points: points
+             });
+             
+                if (response.data.success) {  
+                toast.success(response.data.message)    
+            } else {
+                toast.error(response.data.message)
+            }
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
     const value = {
-     teacher, setTeacher, bookings, setBookings, getBookingByTeacherId, getTeacherById, 
+     teacher, setTeacher, bookings, setBookings, getBookingByTeacherId, addPoints, getTeacherById, updateTeacher
     }
 
     return (

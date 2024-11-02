@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import dropdown from "/src/assets/assets_frontend/dropdown_icon.svg";
 import { assets } from '../assets/assets_frontend/assets';
-import { useUser } from '../context/UserContext'; // Import the UserContext
+import { UserContext } from '../context/UserContext'; // Import the UserContext
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from 'i18next';
 import LanguageSwitcher from './LnaguageSwitcher';
@@ -10,7 +10,7 @@ import LanguageSwitcher from './LnaguageSwitcher';
 
 export default function Navbar() {
     const navigate = useNavigate();
-    const { user, setUser } = useUser(); // Access user context
+    const { user, setUser } = useContext(UserContext); // Access user context
     const [showMenu, setShowMenu] = useState(false);
     const [token, setToken] = useState(true);
     const { t } = useTranslation();

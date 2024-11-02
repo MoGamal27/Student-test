@@ -5,9 +5,10 @@ import { toast } from "react-toastify";
 export const AdminContext = createContext();
 
 const AdminContextProvider = (props) => {
-    const [token, setToken] = useState(localStorage.getItem('token')); // Retrieve token from localStorage
+    const [token, setToken] = useState(localStorage.getItem('token'));
     const [teacher, setTeachers] = useState([]);
     const [bookings, setBookings] = useState([]);
+    const [role, setRole] = useState('');
     //const [completeBookings, setCompleteBookings] = useState([]);
     const [users, setUsers] = useState([]);
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -30,21 +31,21 @@ const AdminContextProvider = (props) => {
       // get all bookings
       const getAllBookings = async () => {
         try {
-          const  response  = await axios.get('http://localhost:3000/api/bookings/', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(`${backendUrl}/bookings/`);
           if (response.data.success) {
-            toast.success(response.data)
-            console.log(response.data.data) 
-            setBookings(response.data.data);   
-        }else{
-            toast.error(response.data.message)
-        }
-
-    } catch (error) {
-        toast.error(error.message)
-    }
+            const incompleteBookings = response.data.data.filter(booking => !booking.isComplete);
+            setBookings(incompleteBookings);
+          } else {
+            toast.error(response.data.message);
           }
+        } catch (error) {
+          if (error.response && error.response.status === 404) {
+            setBookings([]); // Handle 404 by setting bookings to an empty array
+            toast.warn("No incomplete bookings found.");
+          }
+        }
+      };
+      
 
           // delete booking 
           const deleteBooking = async (id) => {
@@ -88,28 +89,21 @@ const AdminContextProvider = (props) => {
                   // complete booking
                   const completeBooking = async (id) => {
                     try {
-                      const  response  = await axios.put('http://localhost:3000/api/bookings/completed', 
-                        {
-                          id: id,
-                        },
-                        {
+                      const response = await axios.put(`${backendUrl}/bookings/completed`, { id }, {
                         headers: { Authorization: `Bearer ${token}` },
                       });
-                     if(response.data.success){
-                      toast.success(response.data.message);
-                      console.log(response.data.data)
-                       // Update local state to reflect the completed booking
-                   setBookings(prevBookings => prevBookings.filter(booking => booking.id !== id));    
-                     }else{
-                      toast.error(response.data.message);
-                     }
+                      if (response.data.success) {
+                        toast.success(response.data.message);
+                        setBookings(prevBookings => prevBookings.filter(booking => booking.id !== id));
+                      } else {
+                        toast.error(response.data.message);
+                      }
                     } catch (error) {
-                      console.error('Error fetching complete booking', error
-                        .response || error);
-                        toast.error(error.message);
-                        }
-
-                  }
+                      console.error('Error completing booking', error);
+                      toast.error(error.message);
+                    }
+                  };
+                  
 
                   // get complete booking
                   const getCompleteBooking = async () => {
@@ -138,7 +132,8 @@ const AdminContextProvider = (props) => {
         bookings, getAllBookings, 
         deleteBooking, 
         users, getAllUsers, 
-        completeBooking, getCompleteBooking
+        completeBooking, getCompleteBooking,
+        role, setRole
     };
 
     return (

@@ -85,10 +85,9 @@ export default function MyAppointment() {
                 </div>
                 <div className='flex-1 text-sm text-zinc-600'>
                   <p className='text-neutral-800 font-medium'>{teacher?.name}</p>
-                  <p>{teacher?.bio}</p>
                   <p className='text-xs mt-1'>
                     <span className='text-sm text-neutral-700 font-medium'>{t('Date')}</span>
-                    {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleString()}
+                    {booking.slotDate} - {booking.slotTime}
                   </p>
                 </div>
                 <div className='flex flex-col gap-2 justify-end'>
