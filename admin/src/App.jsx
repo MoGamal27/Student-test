@@ -11,6 +11,7 @@ import AllApontments from './pages/Admin/AllApontments';
 import AddTeacher from './pages/Admin/AddTeacher';
 import TeacherList from './pages/Admin/TeacherList';
 import TeacherAppointement from './pages/Teacher/TeacherAppointement';
+import TeacherProfile from './pages/Teacher/TeacherProfile';
 
 export default function App() {
 
@@ -29,6 +30,7 @@ export default function App() {
             <Route path='/add-teacher' element={<AddTeacher/>}/>
             <Route path='/teacher-appointemnet' element={<TeacherAppointement/>}/>
             <Route path='/teacher-list' element={<TeacherList/>}/>
+            <Route path='/teacher-profile' element={<TeacherProfile/>}/>
             
          
           </Routes>

@@ -14,8 +14,8 @@ export default function Dashboard() {
   }
   useEffect(() => {
     if (token) {
-      getAllUsers()
-      getAllTeacher()
+      //getAllUsers()
+      //getAllTeacher()
       getAllBookings()
     }
   }, [token])
@@ -33,7 +33,7 @@ export default function Dashboard() {
         <div className='flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
           <img className='w-14' src={assets.appointments_icon} alt="" />
           <div>
-            <p className='text-xl font-semibold text-gray-600'></p>
+            <p className='text-xl font-semibold text-gray-600'>{bookings.length}</p>
             <p className='text-gray-400'>Appointments</p>
           </div>
         </div>
@@ -60,8 +60,8 @@ export default function Dashboard() {
                 <div className='flex-1 text-sm'>
                   <p className='text-gray-800'>Teacher: {item.teacher.name}</p>
                   <p className='text-gray-800'>Student: {item.student.name}</p>
-                  <p className='text-gray-600'>Start: {new Date(item.startTime).toLocaleString()}</p>
-                  <p className='text-gray-600'>End: {new Date(item.endTime).toLocaleString()}</p>
+                  <p className='text-gray-600'>Date: {item.slotDate}</p>
+                  <p className='text-gray-600'>Time: {item.slotTime}</p>
                 </div>
                 <div className='flex gap-2'>
                   <button onClick={() => deleteBooking(item.id)} className='cursor-pointer bg-red-400 text-white text-sm font-medium px-2 py-1 rounded'>Cancel</button>

@@ -9,7 +9,7 @@ export default function Login() {
     const [state, setState] = useState('Admin');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { setToken, backendUrl } = useContext(AdminContext);
+    const { setToken, backendUrl, role, setRole } = useContext(AdminContext);
     const navigate = useNavigate();
 
     const onSubmitHandler = async (event) => {
@@ -24,6 +24,7 @@ export default function Login() {
                     setToken(data.token); 
                     localStorage.setItem('token', data.token); // Store token in localStorage
                     toast.success('Login successful');
+                    setRole('admin')
                     navigate('/teacher-list');
                 } else {
                     toast.error(data.message);
@@ -37,6 +38,7 @@ export default function Login() {
                     setToken(data.token); 
                     localStorage.setItem('token', data.token); // Store token in localStorage
                     toast.success('Login successful');
+                    setRole('teacher')
                     navigate('/teacher-appointemnet');
                 } else {
                     toast.error(data.message);
