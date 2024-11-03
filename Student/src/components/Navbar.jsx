@@ -129,12 +129,9 @@ export default function Navbar() {
                         <a target='_blank' href='http://localhost:5174/'>
                             <li className='py-1 border text-xs border-primary p-1 rounded-full'>Admin Panel</li>
                         </a>
-                        <button 
-                        onClick={() => navigate('/login')} 
-                        className='bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block'
-                    >
-                        Create account
-                    </button>
+                       <NavLink onClick={() => setShowMenu(false)} to={'/Login'}>
+                       <p className='px-4 py-2 rounded inline-block'>Create account</p>
+                       </NavLink>
                         <LanguageSwitcher/>
                     </ul>
                 </div>
