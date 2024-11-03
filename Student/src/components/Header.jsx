@@ -3,14 +3,15 @@ import gruop from "/src/assets/assets_frontend/group_profiles.png"
 import arrow from "/src/assets/assets_frontend/arrow_icon.svg"
 import test from "/src/assets/assets_frontend/comp-video-bg.png"
 import { useTranslation } from 'react-i18next';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 
 
 export default function Header() {
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
   
-
   return (
         <section>
         <div className='flex flex-col bg-sky-300 md:flex-row flex-wrap rounded-lg px-6  md:px-10 lg:px-20'>
@@ -23,9 +24,9 @@ export default function Header() {
                 <p>{t('paragraph')}</p>
                 <p> <br className='hidden sm:block' /></p>
             </div>
-            <a href="#appointment" className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-gray-600 text-sm m-auto md:m-0 hover:scale-105 transition-all'>
+            <NavLink   onClick={() => navigate('/login')} className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-gray-600 text-sm m-auto md:m-0 hover:scale-105 transition-all'>
                 <h3>{t('Book')}</h3> <img className='w-3' src={arrow} alt="" />
-            </a>
+            </NavLink>
         </div>
         <div className='md:w-1/2 relative'>
             <img className='w-full md:absolute top-10  h-auto rounded-lg' src={test} alt="" />
