@@ -35,7 +35,7 @@ export default function AddTeacher() {
             console.log('Form data:', formData);
 
             // API call to create teacher
-            const { data } = await axios.post('http://localhost:3000/api/teachers', formData, {
+            const { data } = await axios.post('https://booking-lessons-production.up.railway.app/api/teachers', formData, {
                 headers: { token, 'Content-Type': 'application/json' },
             });
 

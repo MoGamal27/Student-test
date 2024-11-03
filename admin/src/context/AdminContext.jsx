@@ -108,7 +108,7 @@ const AdminContextProvider = (props) => {
                   // get complete booking
                   const getCompleteBooking = async () => {
                     try {
-                      const  response  = await axios.get('http://localhost:3000/api/bookings/completed-booking', {
+                      const  response  = await axios.get('https://booking-lessons-production.up.railway.app/api/bookings/completed-booking', {
                         headers: { Authorization: `Bearer ${token}` },
                       });
                       if (response.data.success) {
