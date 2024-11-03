@@ -8,7 +8,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 
 export default function Header() {
-    const navigate = useNavigate();
     const { t } = useTranslation();
 
   
@@ -24,7 +23,7 @@ export default function Header() {
                 <p>{t('paragraph')}</p>
                 <p> <br className='hidden sm:block' /></p>
             </div>
-            <NavLink   onClick={() => navigate('/login')} className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-gray-600 text-sm m-auto md:m-0 hover:scale-105 transition-all'>
+            <NavLink  to={'/Login'} className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-gray-600 text-sm m-auto md:m-0 hover:scale-105 transition-all'>
                 <h3>{t('Book')}</h3> <img className='w-3' src={arrow} alt="" />
             </NavLink>
         </div>
