@@ -26,7 +26,7 @@ export default function App() {
           <Routes>
             <Route path='/' element={<></>}/>
             <Route path='/admin-dashboard' element={<Dashboard/>}/>
-            <Route path='/all-apontments' element={<AllApontments/>}/>
+            <Route path='/all-appointments' element={<AllApontments/>}/>
             <Route path='/add-teacher' element={<AddTeacher/>}/>
             <Route path='/teacher-appointemnet' element={<TeacherAppointement/>}/>
             <Route path='/teacher-list' element={<TeacherList/>}/>
