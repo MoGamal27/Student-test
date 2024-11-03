@@ -31,7 +31,7 @@ export default function MyAppointment() {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/bookings/student/${studentId}`, {
+      const response = await axios.get(`https://booking-lessons-production.up.railway.app/api/bookings/student/${studentId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -46,7 +46,7 @@ export default function MyAppointment() {
 
   const handleCancelAppointment = async (bookingId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/bookings/${bookingId}`, {
+      await axios.delete(`https://booking-lessons-production.up.railway.app/api/bookings/${bookingId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -118,7 +118,7 @@ export default function MyAppointment() {
           <div className="paypal-container">
             <PayPalButtons
               createOrder={async (data, actions) => {
-                const response = await axios.post('http://localhost:3000/api/payment/create-order', {
+                const response = await axios.post('https://booking-lessons-production.up.railway.app/api/payment/create-order', {
                   bookings: bookings.map(booking => booking.id),
                 });
                 return response.data.orderID;

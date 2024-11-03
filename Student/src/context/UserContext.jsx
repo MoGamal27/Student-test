@@ -9,7 +9,7 @@ const UserContextProvider = ({ children }) => {
 
     const getUserById = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/users/oneUser/${id}`, 
+            const response = await axios.get(`https://booking-lessons-production.up.railway.app/api/users/oneUser/${id}`, 
                 {id}, 
             );
             if (response.data.success) {

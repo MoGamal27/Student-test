@@ -24,7 +24,7 @@ export default function Appointment() {
    // Fetch teacher info
    const fetchTeacherInfo = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/teachers/${teacherId}`);
+      const response = await axios.get(`https://booking-lessons-production.up.railway.app/api/teachers/${teacherId}`);
       const teacherData = response.data.data;
 
       // Translate teacher name and bio using `t`
@@ -43,7 +43,7 @@ export default function Appointment() {
         try {
           const formattedDate = `${date.getDate()}_${date.getMonth() + 1}_${date.getFullYear()}`;
           const response = await axios.get(
-            `http://localhost:3000/api/bookings/booked-slots`,
+            `https://booking-lessons-production.up.railway.app/api/bookings/booked-slots`,
             {
               params: { 
                 teacherId: teacherId,
@@ -128,7 +128,7 @@ export default function Appointment() {
       const slotDate = `${date.getDate()}_${date.getMonth() + 1}_${date.getFullYear()}`;
 
       const  response  = await axios.post(
-        'http://localhost:3000/api/bookings/create',
+        'https://booking-lessons-production.up.railway.app/api/bookings/create',
         { studentId, teacherId, slotDate, slotTime },
         { headers: { Authorization: `Bearer ${token}` } }
       );

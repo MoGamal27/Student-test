@@ -59,8 +59,8 @@ export default function Login() {
         setApiError('');
 
         const url = state === 'Sign Up' 
-            ? 'http://localhost:3000/api/auth/signup' 
-            : 'http://localhost:3000/api/auth/signin';
+            ? 'https://booking-lessons-production.up.railway.app/api/auth/signup' 
+            : 'https://booking-lessons-production.up.railway.app/api/auth/signin';
             
         const payload = state === 'Sign Up' 
             ? formData 
