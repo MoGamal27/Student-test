@@ -12,7 +12,6 @@ const UserContextProvider = ({ children }) => {
             const response = await axios.get(`http://localhost:3000/api/users/oneUser/${id}`, 
                 {id}, 
             );
-            console.log(response.data.data);
             if (response.data.success) {
                 setUser(response.data.data);
             } else {

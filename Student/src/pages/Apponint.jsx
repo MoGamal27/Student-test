@@ -1,129 +1,3 @@
-/*import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import info from "/src/assets/assets_frontend/info_icon.svg";
-import { createBooking } from '../api/apiBooking';
-import { jwtDecode } from 'jwt-decode';
-
-export default function Appointment() {
-    const { teacherId } = useParams();
-    const [teacherInfo, setTeacherInfo] = useState(null);
-    const [slotIndex, setSlotIndex] = useState(0);
-    const [slotTime, setSlotTime] = useState('');
-    const [availableSlots, setAvailableSlots] = useState([]);
-    const [token, setToken] = useState(localStorage.getItem('token'));
-
-    const daysOfweek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-    const fetchTeacherInfo = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3000/api/teachers/${teacherId}`);
-            setTeacherInfo(response.data);
-        } catch (error) {
-            console.error("Error fetching teacher data:", error);
-        }
-    };
-
-    const fetchAvailableSlots = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3000/api/schedules/?teacherId=${teacherId}`);
-            const scheduleData = response.data[0];
-            if (scheduleData && scheduleData.availableTimes) {
-                const parsedSlots = JSON.parse(scheduleData.availableTimes);
-                setAvailableSlots(parsedSlots);
-            }
-        } catch (error) {
-            console.error("Error fetching available slots:", error);
-        }
-    };
-
-    const handleBooking = async () => {
-        if (!slotTime) {
-            alert("Please select a time slot.");
-            return;
-        }
-
-        const selectedDate = new Date(slotTime);
-        const startTime = new Date(selectedDate);
-        const endTime = new Date(selectedDate);
-        endTime.setMinutes(endTime.getMinutes() + 30);
-
-        try {
-            const decodedToken = jwtDecode(token);
-            const studentId = decodedToken.id ? parseInt(decodedToken.id, 10) : null;
-
-            if (!studentId) {
-                alert('Student ID is missing. Please log in again.');
-                return;
-            }
-
-            const booking = await createBooking(token, teacherId, startTime.toISOString(), endTime.toISOString(), studentId);
-            console.log('Booking created:', booking);
-            alert('Booking successful!');
-        } catch (error) {
-            console.error(error.message);
-            alert('Error creating booking: ' + error.message);
-        }
-    };
-
-    useEffect(() => {
-        fetchTeacherInfo();
-        fetchAvailableSlots();
-    }, [teacherId]);
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return `${daysOfweek[date.getDay()]}, ${date.toLocaleDateString()} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    };
-
-    return teacherInfo && (
-        <div>
-            <div className='flex flex-col sm:flex-row gap-4'>
-                <div>
-                    <img className='bg-primary w-full sm:max-w-72 rounded-lg' src={teacherInfo.image} alt="" />
-                </div>
-                <div className='flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-white mx-2 sm:mx-0 mt-[-80px] sm:mt-0'>
-                    <p className='flex items-center gap-2 text-2xl font-semibold text-gray-900'>{teacherInfo.name}</p>
-                    <div className='flex items-center gap-2 text-sm mt-1 text-gray-600'>
-                        <video className='w-320 h-240' src={teacherInfo.video} controls></video>
-                    </div>
-                    <div>
-                        <p className='flex items-center gap-1 text-sm font-medium text-gray-900 mt-3'>About <img src={info} alt="" /></p>
-                        <p className='text-sm text-gray-500 max-w-[700px] mt-1'>{teacherInfo.bio}</p>
-                    </div>
-                    <p className='text-gray-500 font-medium mt-4'>
-                        Appointment fee: <span className='text-gray-600'>{teacherInfo.fee}</span>
-                    </p>
-                </div>
-            </div>
-
-            <div className="mt-8">
-                <h2 className="text-xl font-semibold mb-4">Available Slots</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {availableSlots.map((slot, index) => (
-                        <button
-                            key={index}
-                            className={`p-2 rounded ${slotTime === slot ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                            onClick={() => setSlotTime(slot)}
-                        >
-                            {formatDate(slot)}
-                        </button>
-                    ))}
-                </div>
-                {slotTime && (
-                    <button
-                        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                        onClick={handleBooking}
-                    >
-                        Book Appointment
-                    </button>
-                )}
-            </div>
-        </div>
-    );
-}*/
-
-
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
@@ -131,9 +5,11 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import info from '../assets/assets_frontend/info_icon.svg';
 import { jwtDecode } from 'jwt-decode';
+import { useTranslation } from 'react-i18next';
 
 
 export default function Appointment() {
+  const { t, i18n } = useTranslation();
   const { teacherId } = useParams();
     const [teacherInfo, setTeacherInfo] = useState(null);
   const navigate = useNavigate();
@@ -148,12 +24,19 @@ export default function Appointment() {
    // Fetch teacher info
    const fetchTeacherInfo = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/api/teachers/${teacherId}`);
-        setTeacherInfo(response.data.data);
+      const response = await axios.get(`http://localhost:3000/api/teachers/${teacherId}`);
+      const teacherData = response.data.data;
+
+      // Translate teacher name and bio using `t`
+      setTeacherInfo({
+        ...teacherData,
+        name: t(`teachers.${teacherId}.name`),
+        bio: t(`teachers.${teacherId}.bio`),
+      });
     } catch (error) {
-        console.error("Error fetching teacher data:", error);
+      console.error("Error fetching teacher data:", error);
     }
-};
+  };
 
     // Fetch booked slots for the selected date
     const fetchBookedSlots = async (date) => {
@@ -252,7 +135,7 @@ export default function Appointment() {
 
       if (response.data.success) {
         toast.success(response.data.message);
-        navigate('/my-apponint');
+        navigate('/my-appointment');
       } else {
         toast.error(response.data.message);
       }
@@ -270,7 +153,7 @@ export default function Appointment() {
 
   useEffect(() => {
     fetchTeacherInfo();
-  }, [teacherId]);
+  }, [teacherId, i18n.language]);
 
   useEffect(() => {
     if (teacherInfo) {
@@ -304,7 +187,7 @@ export default function Appointment() {
          
           <div>
             <p className="flex items-center gap-1 text-sm font-medium text-gray-900 mt-3">
-              About <img src={info} alt="info" />
+            {t('Bio')} <img src={info} alt="info" />
             </p>
             <p className="text-sm text-gray-500 max-w-[700px] mt-1">
               {teacherInfo.bio}
@@ -314,7 +197,7 @@ export default function Appointment() {
         <video  width={600} height={400} src={teacherInfo.video} controls autoPlay loop muted></video>            
         </div>
           <p className="text-gray-500 font-medium mt-4">
-            Appointment fee: <span className="text-gray-600">{teacherInfo.fees}</span>
+            Appointment fee: <span className="text-gray-600">{teacherInfo.fees}$</span>
           </p>
         </div>
       </div>
