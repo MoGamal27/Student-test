@@ -89,20 +89,43 @@ const AdminContextProvider = (props) => {
                   // complete booking
                   const completeBooking = async (id) => {
                     try {
-                      const response = await axios.put(`${backendUrl}/bookings/completed`, { id }, {
-                        headers: { Authorization: `Bearer ${token}` },
-                      });
-                      if (response.data.success) {
-                        toast.success(response.data.message);
-                        setBookings(prevBookings => prevBookings.filter(booking => booking.id !== id));
-                      } else {
-                        toast.error(response.data.message);
-                      }
+                        // Validate id
+                        if (!id) {
+                            toast.error('Booking ID is required');
+                            return;
+                        }
+                
+                        const response = await axios.put(
+                            `${backendUrl}/bookings/completed`,
+                            { id },
+                            {
+                                headers: { 
+                                    Authorization: `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+                
+                        if (response.data.success) {
+                            toast.success(response.data.message);
+                            setBookings(prevBookings => prevBookings.filter(booking => booking.id !== id));
+                        }
                     } catch (error) {
-                      console.error('Error completing booking', error);
-                      toast.error(error.message);
+                        console.error('Error completing booking:', error);
+                        
+                        // Handle different types of errors
+                        if (error.response) {
+                            // Server responded with an error
+                            toast.error(error.response.data.message || 'Failed to complete booking');
+                        } else if (error.request) {
+                            // Request was made but no response
+                            toast.error('No response from server. Please check your connection.');
+                        } else {
+                            // Error in setting up the request
+                            toast.error('Error making request. Please try again.');
+                        }
                     }
-                  };
+                };
                   
 
                   // get complete booking
