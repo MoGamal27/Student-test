@@ -31,7 +31,7 @@ export default function MyAppointment() {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/bookings/student/${studentId}`, {
+      const response = await axios.get(`https://booking-lessons-production.up.railway.app/api/bookings/student/${studentId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
