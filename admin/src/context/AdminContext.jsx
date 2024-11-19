@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+
 export const AdminContext = createContext();
 
 const AdminContextProvider = (props) => {
@@ -9,6 +10,7 @@ const AdminContextProvider = (props) => {
     const [teacher, setTeachers] = useState([]);
     const [bookings, setBookings] = useState([]);
     const [role, setRole] = useState('');
+    
     //const [completeBookings, setCompleteBookings] = useState([]);
     const [users, setUsers] = useState([]);
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -147,6 +149,54 @@ const AdminContextProvider = (props) => {
                 }
                       }
 
+                      const getPoints = async () => {
+                        try {
+                            const response = await axios.get(`http://localhost:3000/api/admin/point/getPoints`)
+                            if (response.data.success) {
+                                toast.success(response.data.message)
+                            } else {
+                                toast.error(response.data.message)
+                            }
+                        } catch (error) {
+                            toast.error(error.message)
+                        }
+                    }
+
+                      const approvePoints = async (pointId) => {
+                        try {
+                            const response = await axios.put(`http://localhost:3000/api/admin/point/addPoints`, { 
+                                pointId: pointId
+                             });
+                             
+                                if (response.data.success) {  
+                                toast.success(response.data.message)   
+                            } else {
+                                toast.error(response.data.message)
+                            }
+                        } catch (error) {
+                            console.log(error)
+                            toast.error(error.message)
+                        }
+                    }
+                   
+                    const cancelPoints = async (pointId) => {
+       
+                        try {
+                            const response = await axios.delete(`http://localhost:3000/api/admin/point/cancelPoints`, { 
+                                pointId: pointId
+                             });
+                             
+                                if (response.data.success) {  
+                                toast.success(response.data.message)   
+                            } else {
+                                toast.error(response.data.message)
+                            }
+                        } catch (error) {
+                            console.log(error)
+                            toast.error(error.message)
+                        }
+                    }
+
 
     const value = {
         token, setToken,
@@ -156,7 +206,8 @@ const AdminContextProvider = (props) => {
         deleteBooking, 
         users, getAllUsers, 
         completeBooking, getCompleteBooking,
-        role, setRole
+        role, setRole,
+       getPoints, approvePoints, cancelPoints
     };
 
     return (

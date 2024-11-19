@@ -57,16 +57,17 @@ const TeacherContextProvider = (props)=> {
     }
  
     // add points to user
-    const addPoints = async (userId, points) => {
+    const addPoints = async (teacherId,userId, points) => {
        
         try {
-            const response = await axios.put(`https://booking-lessons-production.up.railway.app/api/users/point/addPoints`, { 
+            const response = await axios.post(`http://localhost:3000/api/teachers/point/addPoints`, { 
+                teacherId: teacherId,
                 userId: userId,
                 points: points
              });
              
                 if (response.data.success) {  
-                toast.success(response.data.message)    
+                toast.success(response.data.message)   
             } else {
                 toast.error(response.data.message)
             }

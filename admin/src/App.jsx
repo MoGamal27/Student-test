@@ -12,6 +12,7 @@ import AddTeacher from './pages/Admin/AddTeacher';
 import TeacherList from './pages/Admin/TeacherList';
 import TeacherAppointement from './pages/Teacher/TeacherAppointement';
 import TeacherProfile from './pages/Teacher/TeacherProfile';
+import Points from './pages/Admin/points';
 
 export default function App() {
 
@@ -31,6 +32,7 @@ export default function App() {
             <Route path='/teacher-appointemnet' element={<TeacherAppointement/>}/>
             <Route path='/teacher-list' element={<TeacherList/>}/>
             <Route path='/teacher-profile' element={<TeacherProfile/>}/>
+            <Route path='/points' element={<Points/>}/>
             
          
           </Routes>

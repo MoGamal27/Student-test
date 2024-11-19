@@ -3,10 +3,12 @@ import { assets } from '../../assets/assets'
 import logo from '/src/assets/patient_icon.svg'
 import { AdminContext } from '../../context/AdminContext'
 import { useNavigate } from 'react-router-dom'
+import { TeacherContext } from '../../context/TeacherContext';
 
 
 export default function Dashboard() {
   const { token, teacher , bookings ,users, getAllUsers, getAllTeacher, getAllBookings ,completeBooking, deleteBooking } = useContext(AdminContext)
+  const { addPoints } = useContext(TeacherContext);
   const navigate = useNavigate()
   const handleLogout = () => {
     localStorage.removeItem('token')
