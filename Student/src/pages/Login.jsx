@@ -8,6 +8,7 @@ export default function Login() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phone: '',
         password: ''
     });
     const [errors, setErrors] = useState({});
@@ -25,6 +26,9 @@ export default function Login() {
             newErrors.email = 'Email is required';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'Please enter a valid email';
+        }
+        if(!formData.phone.trim()) {
+            newErrors.phone = 'Phone number is required';
         }
         if (!formData.password) {
             newErrors.password = 'Password is required';
@@ -48,7 +52,7 @@ export default function Login() {
                 [name]: ''
             }));
         }
-        setApiError(''); // Clear API error when user makes changes
+        setApiError(''); 
     };
 
     const onSubmitHandler = async (event) => {
@@ -84,7 +88,7 @@ export default function Login() {
 
     const toggleState = () => {
         setState(prev => prev === 'Sign Up' ? 'Login' : 'Sign Up');
-        setFormData({ name: '', email: '', password: '' });
+        setFormData({ name: '', email: '', phone: '' ,password: '' });
         setErrors({});
         setApiError('');
     };
@@ -115,7 +119,19 @@ export default function Login() {
                             value={formData.name}
                         />
                         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                    </div>
+                        
+                    <p>{t('phone')}</p>
+                    <input 
+                        name="phone"
+                        className={`border ${errors.phone ? 'border-red-500' : 'border-zinc-300'} 
+                            rounded w-full p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-primary`}
+                        type="text"
+                        onChange={handleInputChange}
+                        value={formData.phone}
+                    />
+                    {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                </div>
+
                 )}
 
                 <div className='w-full'>
