@@ -25,7 +25,7 @@ export default function TeacherAppointment() {
             return;
         }
         try {
-            const response = await axios.post(`http://localhost:3000/api/teachers/point/addPoints`, { 
+            const response = await axios.post(`https://booking-lessons-production.up.railway.app/api/teachers/point/addPoints`, { 
                 teacherId: teacherId,
                 studentId: studentId,
                 points: points

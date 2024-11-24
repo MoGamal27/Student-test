@@ -5,11 +5,11 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 
 export default function AddTeacher() {
-    const [teachImg, setTeachImg] = useState(''); // URL for teacher image
-    const [teachVideo, setTeachVideo] = useState(''); // URL for teacher video
+    const [teachImg, setTeachImg] = useState(''); 
+    const [teachVideo, setTeachVideo] = useState(''); 
     const [name, setName] = useState('');
-    const [old, setOld] = useState(''); // Age (old) field
-    const [bio, setBio] = useState(''); // Bio field
+    const [old, setOld] = useState(''); 
+    const [bio, setBio] = useState(''); 
     const { backendUrl, token } = useContext(AdminContext);
 
     const onSubmitHandler = async (event) => {

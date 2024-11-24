@@ -10,7 +10,7 @@ export default function Points() {
   // Fetch Points Requests
   const fetchPoints = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/admin/point/getPoints`)
+      const response = await axios.get(`https://booking-lessons-production.up.railway.app/api/admin/point/getPoints`)
       if (response.data.success) {
           toast.success(response.data.message)
           setPointsRequests(response.data.data);
@@ -25,7 +25,7 @@ export default function Points() {
   // Approve Points Request
   const handleApprove = async (pointId) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/admin/point/approvePoints`, { 
+      const response = await axios.put(`https://booking-lessons-production.up.railway.app/api/admin/point/approvePoints`, { 
         pointRequestId: pointId
      });
      
@@ -45,7 +45,7 @@ export default function Points() {
   // Cancel Points Request
   const handleCancel = async (pointId) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/admin/point/cancelPoints`,
+      const response = await axios.delete(`https://booking-lessons-production.up.railway.app/api/admin/point/cancelPoints`,
         { params: { pointRequestId: pointId } }
       );
          toast.success(response.data.message)

@@ -151,7 +151,7 @@ const AdminContextProvider = (props) => {
 
                       const getPoints = async () => {
                         try {
-                            const response = await axios.get(`http://localhost:3000/api/admin/point/getPoints`)
+                            const response = await axios.get(`https://booking-lessons-production.up.railway.app/api/admin/point/getPoints`)
                             if (response.data.success) {
                                 toast.success(response.data.message)
                             } else {
@@ -164,7 +164,7 @@ const AdminContextProvider = (props) => {
 
                       const approvePoints = async (pointId) => {
                         try {
-                            const response = await axios.put(`http://localhost:3000/api/admin/point/addPoints`, { 
+                            const response = await axios.put(`https://booking-lessons-production.up.railway.app/api/admin/point/addPoints`, { 
                                 pointId: pointId
                              });
                              
@@ -182,7 +182,7 @@ const AdminContextProvider = (props) => {
                     const cancelPoints = async (pointId) => {
        
                         try {
-                            const response = await axios.delete(`http://localhost:3000/api/admin/point/cancelPoints`, { 
+                            const response = await axios.delete(`https://booking-lessons-production.up.railway.app/api/admin/point/cancelPoints`, { 
                                 pointId: pointId
                              });
                              
