@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+/*import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import { toast } from 'react-toastify';
@@ -251,8 +251,269 @@ export default function Appointment() {
       </div>
     </div>
   );
+}*/
+
+
+
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { useTranslation } from 'react-i18next';
+
+export default function Appointment() {
+  const { t, i18n } = useTranslation();
+  const { teacherId } = useParams();
+  const [teacherInfo, setTeacherInfo] = useState(null);
+  const navigate = useNavigate();
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const timeSlots = [
+    "09:00", "10:00", "11:00","12:00","13:00", "14:00",
+    "15:00", "16:00","17:00", "18:00", "19:00", "20:00", "21:00",
+    "22:00", "23:00"
+  ];
+
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDay = new Date(year, month, 1).getDay();
+    
+    const days = [];
+    for (let i = 0; i < firstDay; i++) {
+      days.push(null);
+    }
+    
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(i);
+    }
+    
+    return days;
+  };
+
+  const changeMonth = (offset) => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() + offset);
+    setCurrentDate(newDate);
+  };
+
+  const handleDateSelect = (day) => {
+    if (day) {
+      const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      setSelectedDate(newDate);
+      setSelectedTimeSlots([]); 
+      fetchAvailableTimeSlots(newDate);
+    }
+  };
+
+  const handleTimeSlotSelection = (slot) => {
+    setSelectedTimeSlots(prev => {
+      if (prev.includes(slot)) {
+        return prev.filter(s => s !== slot);
+      }
+      return [...prev, slot];
+    });
+  };
+
+  const fetchAvailableTimeSlots = async (date) => {
+    try {
+      const formattedDate = `${date.getDate()}_${date.getMonth() + 1}_${date.getFullYear()}`;
+      const response = await axios.get(
+        `https://booking-lessons-production.up.railway.app/api/bookings/booked-slots`,
+        {
+          params: { 
+            teacherId: teacherId,
+            slotDate: formattedDate,
+          },
+        }
+      );
+      
+      const bookedSlots = response.data.bookedSlots || [];
+      const available = timeSlots.filter(slot => !bookedSlots.includes(slot));
+      setAvailableTimeSlots(available);
+    } catch (error) {
+      console.error('Error fetching time slots:', error);
+      setAvailableTimeSlots([]);
+    }
+  };
+
+  const bookAppointment = async () => {
+    if (selectedTimeSlots.length === 0) {
+      toast.warn('Please select at least one time slot');
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    const studentId = decodedToken.id ? parseInt(decodedToken.id, 10) : null;
+
+    if (!decodedToken || !studentId) {
+      toast.warn('Please login to book an appointment');
+      return navigate('login');
+    }
+
+    try {
+      setLoading(true);
+      const slotDate = `${selectedDate.getDate()}_${selectedDate.getMonth() + 1}_${selectedDate.getFullYear()}`;
+      
+      const bookingPromises = selectedTimeSlots.map(timeSlot => 
+        axios.post(
+          'https://booking-lessons-production.up.railway.app/api/bookings/create',
+          { 
+            studentId, 
+            teacherId, 
+            slotDate, 
+            slotTime: timeSlot 
+          },
+          { 
+            headers: { Authorization: `Bearer ${token}` } 
+          }
+        )
+      );
+
+      const responses = await Promise.all(bookingPromises);
+      
+      if (responses.every(response => response.data.success)) {
+        toast.success('All appointments booked successfully');
+        navigate('/my-appointment');
+      }
+    } catch (error) {
+      toast.error('Error booking appointments: ' + error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchTeacherInfo = async () => {
+      try {
+        const response = await axios.get(
+          `https://booking-lessons-production.up.railway.app/api/teachers/${teacherId}`
+        );
+        setTeacherInfo(response.data.data);
+      } catch (error) {
+        console.error('Error fetching teacher data:', error);
+      }
+    };
+
+    fetchTeacherInfo();
+  }, [teacherId]);
+
+  if (!teacherInfo) return null;
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="flex flex-col md:flex-row gap-6 mb-8">
+        <img 
+          src={teacherInfo.image} 
+          alt={teacherInfo.name}
+          className="w-full md:w-64 h-64 object-cover rounded-lg"
+        />
+        <div className="flex-1 bg-white p-6 rounded-lg shadow">
+          <h2 className="text-2xl font-bold mb-2">{teacherInfo.name}</h2>
+          <p className="text-gray-600 mb-4">{teacherInfo.bio}</p>
+          <div className="sm:py-5 md:flex-col">
+        <video  width={600} height={400} src={teacherInfo.video} controls autoPlay loop muted></video>            
+        </div>
+          <p className="text-lg font-semibold">Fee: ${teacherInfo.fees}/hour</p>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow">
+        <div className="flex justify-between items-center mb-4">
+          <button 
+            onClick={() => changeMonth(-1)}
+            className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
+          >
+            Previous
+          </button>
+          <h3 className="text-xl font-bold">
+            {months[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </h3>
+          <button 
+            onClick={() => changeMonth(1)}
+            className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
+          >
+            Next
+          </button>
+        </div>
+
+        <div className="grid grid-cols-7 gap-2 mb-6">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} className="text-center font-semibold">
+              {day}
+            </div>
+          ))}
+          {getDaysInMonth(currentDate).map((day, index) => (
+            <div 
+              key={index}
+              onClick={() => day && handleDateSelect(day)}
+              className={`
+                text-center p-2 rounded-lg cursor-pointer
+                ${day ? 'hover:bg-primary hover:text-white' : ''}
+                ${selectedDate.getDate() === day && 
+                  selectedDate.getMonth() === currentDate.getMonth() 
+                    ? 'bg-primary text-white' 
+                    : day ? 'bg-gray-50' : ''}
+              `}
+            >
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {selectedDate && (
+          <div className="mt-6">
+            <h4 className="text-lg font-semibold mb-4">
+              Available Time Slots for {selectedDate.toLocaleDateString()}
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {availableTimeSlots.map(slot => (
+                <button
+                  key={slot}
+                  onClick={() => handleTimeSlotSelection(slot)}
+                  className={`
+                    p-2 rounded-lg text-center transition-colors
+                    ${selectedTimeSlots.includes(slot) 
+                      ? 'bg-primary text-white' 
+                      : 'bg-gray-100 hover:bg-gray-200'}
+                  `}
+                >
+                  {slot}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              <p className="text-gray-600">
+                Selected slots: {selectedTimeSlots.length > 0 
+                  ? selectedTimeSlots.join(', ') 
+                  : 'None'}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={bookAppointment}
+          disabled={selectedTimeSlots.length === 0 || loading}
+          className="mt-6 w-full bg-primary text-white py-3 rounded-lg disabled:opacity-50 
+            hover:bg-primary/90 transition-colors"
+        >
+          {loading ? 'Booking...' : `Book ${selectedTimeSlots.length} Appointment(s)`}
+        </button>
+      </div>
+    </div>
+  );
 }
-
-
-
-
